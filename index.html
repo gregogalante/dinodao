@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>DinoDAO</title>
+    
+    <style>
+      body, html {
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: monospace;
+      }
+
+      #game {
+        width: 600px;
+        height: 200px;
+        position: relative;
+        border-bottom: solid 2px white;
+        overflow: hidden;
+      }
+
+      #gameDino {
+        position: absolute;
+        width: 30px;
+        height: 50px;
+        background-color: white;
+        bottom: 0;
+        left: 200px;
+        transition: transform 0.2s;
+      }
+
+      #gameDino.jump {
+        transform: translateY(-100px);
+      }
+
+      #gameTrigger {
+        position: absolute;
+        width: 30px;
+        height: 50px;
+        background-color: red;
+        bottom: 0;
+        right: 0;
+        opacity: 0;
+      }
+
+      #gameTrigger.active {
+        opacity: 1;
+      }
+
+      #gamePoints {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: white;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game">
+      <div id="gameDino"></div>
+      <div id="gameTrigger"></div>
+      <div id="gamePoints">0</div>
+    </div>
+
+    <script type="module">
+      import init, { play, jump } from './pkg/dinodao.js';
+
+      const game = document.getElementById('game');
+      const gameDino = document.getElementById('gameDino');
+      const gameTrigger = document.getElementById('gameTrigger');
+      const gamePoints = document.getElementById('gamePoints');
+      const gameWidth = parseInt(game.clientWidth);
+
+      let gameSpeed = 5;
+      let gameTriggerInterval = null;
+      let gameTriggerLastPerc = 0;
+
+      async function run() {
+        await init();
+
+        window.dinodaoTrigger = function(status) {
+          console.log('dinodaoTrigger', status);
+
+          gameTrigger.classList.toggle('active', status);
+          if (status) {
+            gameTrigger.style.right = '0';
+            gameTriggerLastPerc = 0;
+
+            if (gameTriggerInterval) clearInterval(gameTriggerInterval);
+            gameTriggerInterval = setInterval(() => {
+              const maxTime = gameWidth * gameSpeed;
+              const interval = 10;
+
+              gameTriggerLastPerc += (interval / maxTime) * 100;
+              gameTrigger.style.right = `${gameTriggerLastPerc}%`;
+
+            }, 10);
+          } else {
+            clearInterval(gameTriggerInterval);
+            gameTrigger.style.right = '0';
+            gameTriggerLastPerc = 0;
+          }
+        }
+
+        window.dinodaoJump = function(status) {
+          console.log('dinodaoJump', status);
+
+          gameDino.classList.toggle('jump', status);
+        }
+
+        window.dinodaoUpdateSpeed = function(speed) {
+          console.log('dinodaoUpdateSpeed', speed);
+
+          gameSpeed = speed;
+        }
+
+        window.dinodaoUpdatePoints = function(points) {
+          console.log('dinodaoUpdatePoints', points);
+
+          gamePoints.innerText = points;
+        }
+
+        window.dinodaoEnd = function(result, token) {
+          console.log('dinodaoEnd', result, token);
+
+          alert(`Game Over! You ${result ? 'won' : 'lost'}! Token: ${token}`);
+        }
+
+        window.addEventListener('keydown', (e) => {
+          if (e.code === 'Space') {
+            jump();
+          }
+        });
+
+        const dinodaoPlay = play("12345678901234567890123456789012", gameWidth);
+        console.log('dinodaoPlay', dinodaoPlay);
+      }
+      
+      run();
+    </script>
+  </body>
+</html>
