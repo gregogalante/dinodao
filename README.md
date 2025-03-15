@@ -2,6 +2,7 @@
 
 Rust implementation of the Dino Chrome game (with some mods).
 
+This is just an example of how to use Rust and WebAssembly to create a simple game in the browser and use the WASM to generate a proof of work to be sure that the user has really played the game and obtained the score.
 ## Build and run
 
 ```bash

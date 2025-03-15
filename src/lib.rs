@@ -71,7 +71,10 @@ fn setup_game_loop() {
                 if state.last_jump == 0.0 {
                     if trigger_percentage >= USER_PERCENTAGE_POSITION_START && trigger_percentage <= USER_PERCENTAGE_POSITION_END {
                         state.active = false;
-                        dinodaoEnd(false, state.token.clone());
+
+                        // TODO: Here we should encrypt the result of the game and send it back crypted as a new token.
+
+                        dinodaoEnd(state.token.clone());
                         return;
                     }
                 }
@@ -114,7 +117,7 @@ extern "C" {
     fn dinodaoJump(status: bool);
     fn dinodaoUpdateSpeed(speed: f64);
     fn dinodaoUpdatePoints(points: u32);
-    fn dinodaoEnd(result: bool, token: String);
+    fn dinodaoEnd(token: String);
 
     // Use console.log to print the message
     #[wasm_bindgen(js_namespace = console)]

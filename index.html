@@ -126,10 +126,10 @@
           gamePoints.innerText = points;
         }
 
-        window.dinodaoEnd = function(result, token) {
-          console.log('dinodaoEnd', result, token);
+        window.dinodaoEnd = function(token) {
+          console.log('dinodaoEnd', token);
 
-          alert(`Game Over! You ${result ? 'won' : 'lost'}! Token: ${token}`);
+          alert(`Game Over! Token: ${token}`);
         }
 
         window.addEventListener('keydown', (e) => {
